@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orión y el Arcoíris Transparente</title>
+    <!-- Cargamos Tailwind CSS para estilos rápidos y bonitos -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Fuente bonita para cuentos -->
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background-color: #fff7ed; /* orange-50 */
+            background-image: radial-gradient(#fbbf24 0.5px, transparent 0.5px);
+            background-size: 24px 24px;
+        }
+        .book-shadow {
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+        /* Animaciones */
+        .fade-in { animation: fadeIn 0.5s ease-out forwards; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .slide-in { animation: slideIn 0.4s ease-out forwards; }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+
+    <!-- PANTALLA DE INICIO -->
+    <div id="start-screen" class="fixed inset-0 z-50 flex items-center justify-center bg-orange-50/95 backdrop-blur-sm">
+        <div class="bg-white p-8 rounded-3xl shadow-xl max-w-sm w-full border-b-8 border-orange-200 text-center">
+            <div class="w-20 h-20 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-6 text-orange-500">
+                <!-- Icono Libro -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+            </div>
+            <h1 class="text-2xl font-bold text-slate-800 mb-2">Cuentos de Málaga</h1>
+            <p class="text-slate-500 mb-8">Orión y el Arcoíris Transparente</p>
+            <button onclick="startBook()" class="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-4 px-6 rounded-xl transition-transform active:scale-95 text-lg shadow-lg shadow-orange-200 flex items-center justify-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                Leer Cuento
+            </button>
+        </div>
+    </div>
+
+    <!-- LIBRO -->
+    <div id="book-container" class="hidden max-w-2xl w-full bg-white rounded-[2rem] book-shadow overflow-hidden border-b-8 border-orange-200 border-x-2 border-orange-100 relative">
+        
+        <!-- HEADER -->
+        <div class="bg-orange-500 px-6 py-4 text-white flex justify-between items-center shadow-md z-10 relative">
+            <div class="flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+                <span class="font-bold tracking-wider text-xs uppercase opacity-90">Cuento Interactivo</span>
+            </div>
+            <div class="flex items-center gap-3 bg-orange-600/30 px-3 py-1 rounded-full">
+                <button onclick="toggleSound()" id="sound-btn" class="hover:text-orange-200 transition-colors">
+                    <!-- Icono Volumen -->
+                    <svg id="vol-on" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+                    <svg id="vol-off" class="hidden" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>
+                </button>
+                <span class="text-xs font-bold" id="page-indicator">1 / 10</span>
+            </div>
+        </div>
+
+        <!-- CONTENIDO -->
+        <div class="p-6 md:p-10 flex flex-col justify-center bg-orange-50/10 min-h-[500px]">
+            <div id="page-content" class="fade-in">
+                
+                <!-- ILUSTRACIÓN -->
+                <div class="w-full relative rounded-2xl overflow-hidden shadow-lg border-4 border-white bg-slate-200 mb-6 aspect-video group">
+                    <!-- Mensaje de carga / Fallback -->
+                    <div class="absolute inset-0 flex flex-col items-center justify-center text-slate-400 z-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                        <span class="text-xs mt-2 font-medium">Cargando imagen...</span>
+                    </div>
+
+                    <!-- Div de la imagen (Sprite) -->
+                    <div id="illustration-div" class="absolute inset-0 w-full h-full bg-no-repeat transition-transform duration-700 z-10"
+                         style="background-size: 500% 400%;">
+                    </div>
+                    
+                    <!-- Brillo -->
+                    <div class="absolute inset-0 bg-gradient-to-tr from-white/20 to-transparent pointer-events-none mix-blend-overlay z-20"></div>
+
+                    <!-- Botón de reparación de imagen (oculto por defecto, visible al hacer hover si falla) -->
+                    <label for="image-upload" class="absolute bottom-2 right-2 bg-black/50 hover:bg-black/70 text-white text-xs px-2 py-1 rounded cursor-pointer z-30 opacity-0 group-hover:opacity-100 transition-opacity">
+                        ¿No ves la imagen? Clic aquí
+                    </label>
+                    <input type="file" id="image-upload" accept="image/*" class="hidden" onchange="loadImage(event)">
+                </div>
+                
+                <!-- TEXTO -->
+                <div class="text-center space-y-4 px-2">
+                    <h2 id="page-title" class="hidden text-3xl md:text-5xl font-black text-orange-600 leading-tight drop-shadow-sm"></h2>
+                    <div class="relative inline-block">
+                        <span id="quote-start" class="hidden absolute -top-4 -left-6 text-6xl text-orange-100 font-serif leading-none">“</span>
+                        <p id="page-text" class="text-xl md:text-2xl leading-relaxed font-medium text-slate-700"></p>
+                        <span id="quote-end" class="hidden absolute -bottom-8 -right-6 text-6xl text-orange-100 font-serif leading-none rotate-180">“</span>
+                    </div>
+                    <p id="page-subtext" class="text-lg text-slate-500 font-medium italic"></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- NAVEGACIÓN -->
+        <div class="bg-white p-4 border-t border-slate-100 flex justify-between items-center gap-4">
+            <button id="prev-btn" onclick="prevPage()" class="p-4 rounded-full transition-all active:scale-95 bg-orange-100 text-orange-600 hover:bg-orange-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-300">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+            </button>
+
+            <!-- Puntos de progreso -->
+            <div id="dots-container" class="flex gap-1.5 flex-wrap justify-center max-w-[200px]">
+                <!-- Se generan con JS -->
+            </div>
+
+            <button id="next-btn" onclick="nextPage()" class="p-4 rounded-full transition-all active:scale-95 bg-orange-100 text-orange-600 hover:bg-orange-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-300">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // --- DATOS DEL CUENTO ---
+        const pages = [
+            {
+                title: "Portada",
+                text: "Orión y el Arcoíris Transparente",
+                subtext: "Una aventura gigante para un caballero muy pequeño.",
+                col: 1, row: 2
+            },
+            {
+                text: "Había una vez, en una casa de Málaga que olía a sol y a bizcocho recién horneado, un caballero muy pequeño, con bigotes de hilo dental y orejas de pétalo de rosa. Se llamaba Orión, un hámster que soñaba con alcanzar las estrellas.",
+                col: 2, row: 4
+            },
+            {
+                text: "Orión fue adoptado por Rebeca, que sabía dónde se esconden los sueños, y Marcela, que tenía la risa más brillante de toda Andalucía.",
+                col: 3, row: 4
+            },
+            {
+                text: "Roberto, el Arquitecto Real, decidió construir el 'Palacio Transparente de las Tres Plantas'. Con un martillo de madera y una gran sonrisa, puso manos a la obra.",
+                col: 3, row: 3
+            },
+            {
+                text: "Le armaron un dormitorio de nubes. El suelo era tan blandito que Orión sentía que dormía sobre un merengue. Pero lo mejor era el Tubo Mágico: una montaña rusa de caramelo.",
+                col: 5, row: 4
+            },
+            {
+                text: "Cuando pasaba por el tramo azul, Orión creía que era un buzo nadando por el fondo del mar de Málaga, esquivando sardinas de purpurina.",
+                col: 1, row: 1
+            },
+            {
+                text: "En el tramo amarillo, se sentía un astronauta viajando por un rayo de sol directo al planeta Girasol, rodeado de estrellas y planetas.",
+                col: 2, row: 1
+            },
+            {
+                text: "Y al llegar al tramo verde, ¡zas!, se imaginaba que era un explorador en medio de una selva de lechuga gigante.",
+                col: 3, row: 1
+            },
+            {
+                text: "Subía al tercer piso, hacía piruetas en su rueda que sonaba 'clic-clic-clic' y bajaba a toda velocidad para contarle sus hazañas a Rebeca y Marcela.",
+                col: 2, row: 2
+            },
+            {
+                text: "Roberto les traía un trocito de manzana. Orión lo recibía con dignidad y se lo guardaba en sus cachetes, que eran como dos mochilas mágicas.",
+                col: 4, row: 3
+            },
+            {
+                text: "Orión descubrió que no hace falta ser gigante para vivir una aventura gigante. Solo se necesita un tubo de colores, un papá arquitecto y dos niñas con ganas de jugar.",
+                col: 1, row: 4
+            }
+        ];
+
+        // --- ESTADO ---
+        let currentPage = 0;
+        let isSoundEnabled = true;
+        let audioCtx = null;
+        let imageSource = 'Gemini_Generated_Image_q4h7n1q4h7n1q4h7.jpg'; // Nombre por defecto
+
+        // --- FUNCIONES ---
+
+        function startBook() {
+            document.getElementById('start-screen').classList.add('hidden');
+            document.getElementById('book-container').classList.remove('hidden');
+            document.getElementById('book-container').classList.add('fade-in');
+            
+            // Inicializar Audio Context
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            
+            renderPage();
+            renderDots();
+        }
+
+        function playSound() {
+            if (!isSoundEnabled || !audioCtx) return;
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+
+            const oscillator = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+
+            oscillator.type = 'triangle';
+            oscillator.frequency.setValueAtTime(400, audioCtx.currentTime);
+            oscillator.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.1);
+
+            gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
+            gainNode.gain.linearRampToValueAtTime(0.1, audioCtx.currentTime + 0.02);
+            gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.15);
+
+            oscillator.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            oscillator.start();
+            oscillator.stop(audioCtx.currentTime + 0.15);
+        }
+
+        function toggleSound() {
+            isSoundEnabled = !isSoundEnabled;
+            document.getElementById('vol-on').classList.toggle('hidden');
+            document.getElementById('vol-off').classList.toggle('hidden');
+        }
+
+        function loadImage(event) {
+            const file = event.target.files[0];
+            if (file) {
+                imageSource = URL.createObjectURL(file);
+                renderPage(); // Re-renderizar para aplicar la nueva imagen
+            }
+        }
+
+        function renderPage() {
+            const page = pages[currentPage];
+            
+            // Animación
+            const contentDiv = document.getElementById('page-content');
+            contentDiv.classList.remove('fade-in', 'slide-in');
+            void contentDiv.offsetWidth; // Trigger reflow
+            contentDiv.classList.add('slide-in');
+
+            // Imagen (Sprite Logic)
+            const illusDiv = document.getElementById('illustration-div');
+            const posX = (page.col - 1) * 25;
+            const posY = (page.row - 1) * 33.33;
+            illusDiv.style.backgroundImage = `url('${imageSource}')`;
+            illusDiv.style.backgroundPosition = `${posX}% ${posY}%`;
+
+            // Textos
+            const titleEl = document.getElementById('page-title');
+            const textEl = document.getElementById('page-text');
+            const subtextEl = document.getElementById('page-subtext');
+            const quoteStart = document.getElementById('quote-start');
+            const quoteEnd = document.getElementById('quote-end');
+
+            if (page.title) {
+                titleEl.textContent = page.text;
+                titleEl.classList.remove('hidden');
+                textEl.classList.add('hidden');
+                subtextEl.textContent = page.subtext;
+                subtextEl.classList.remove('hidden');
+                quoteStart.classList.add('hidden');
+                quoteEnd.classList.add('hidden');
+            } else {
+                titleEl.classList.add('hidden');
+                textEl.textContent = page.text;
+                textEl.classList.remove('hidden');
+                subtextEl.classList.add('hidden');
+                quoteStart.classList.remove('hidden');
+                quoteEnd.classList.remove('hidden');
+            }
+
+            // Indicador y Botones
+            document.getElementById('page-indicator').textContent = `${currentPage + 1} / ${pages.length}`;
+            document.getElementById('prev-btn').disabled = currentPage === 0;
+            document.getElementById('next-btn').disabled = currentPage === pages.length - 1;
+
+            updateDots();
+        }
+
+        function renderDots() {
+            const container = document.getElementById('dots-container');
+            container.innerHTML = '';
+            pages.forEach((_, idx) => {
+                const dot = document.createElement('div');
+                dot.className = `h-1.5 rounded-full transition-all duration-300 ${idx === currentPage ? 'w-6 bg-orange-500' : 'w-1.5 bg-slate-200'}`;
+                dot.id = `dot-${idx}`;
+                container.appendChild(dot);
+            });
+        }
+
+        function updateDots() {
+            pages.forEach((_, idx) => {
+                const dot = document.getElementById(`dot-${idx}`);
+                if (dot) {
+                    dot.className = `h-1.5 rounded-full transition-all duration-300 ${idx === currentPage ? 'w-6 bg-orange-500' : 'w-1.5 bg-slate-200'}`;
+                }
+            });
+        }
+
+        function nextPage() {
+            if (currentPage < pages.length - 1) {
+                currentPage++;
+                renderPage();
+                playSound();
+            }
+        }
+
+        function prevPage() {
+            if (currentPage > 0) {
+                currentPage--;
+                renderPage();
+                playSound();
+            }
+        }
+    </script>
+</body>
+</html>
